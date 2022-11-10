@@ -4,14 +4,30 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 from flask import Flask, render_template,request
 import pickle
-import numpy as numpy
+import numpy as np
 import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 
 top_selling_df = pickle.load(open('top_selling.pkl', 'rb'))
 top_books = pickle.load(open('top_books.pkl', 'rb'))
-
+# for collaborative
 collab_user1 = pickle.load(open('collab_user1.pkl', 'rb'))
+
+us_canada_book_title = pickle.load(open('us_canada_book_title.pkl', 'rb'))
+corr = pickle.load(open('corr.pkl', 'rb'))
+books_with_image = pickle.load(open('books_with_image.pkl', 'rb'))
+
+#content base
+title_matrix = pickle.load(open('title_matrix.pkl', 'rb'))
+features = pickle.load(open('features.pkl', 'rb'))
+book4 = pickle.load(open('book4.pkl', 'rb'))
+
+
+
+
+
 
 
 app = Flask(__name__)
@@ -40,7 +56,7 @@ def collab():
     # print(df_user.head(5))
     # df_pred = df_user[df_user['pred_rating'].notna()].sort_values('pred_rating', ascending=False).head(5)
     #
-    df_rating = df_user[df_user['pred_rating'].notna()].sort_values('book_rating', ascending=False).head(15)
+    df_rating = df_user[df_user['pred_rating'].notna()].sort_values('book_rating', ascending=False).head(20)
     df_rating = df_rating.drop(['user_id', 'Total_No_Of_Users_Rated', 'book_rating', 'Avg_Rating'], axis=1)
     data = []
     for i in range(len(df_rating) + 1):
@@ -54,8 +70,100 @@ def collab():
 #                             image2=list(df_rating['Image-URL-M'].values),
 #                             ISBN=list(df_rating['ISBN'].values)
 #                            )
+
+
+@app.route('/collab2')
+def collab_ui2():
+    return render_template('collab2.html')
+@app.route('/collab_2',methods=["post"])
+def collab2():
+    us_canada_book_list=list(us_canada_book_title)
+    user_input=request.form.get('user_input2')
+    indexx= us_canada_book_list.index(user_input)
+    corr_coffey_hands = corr[indexx]
+    similar_items = list(us_canada_book_title[(corr_coffey_hands < 1.0) & (corr_coffey_hands > 0.9)])
+
+    data1 = []
+    for i in similar_items:
+        item = []
+        temp_df = books_with_image[books_with_image['Book-Title'] == i]
+        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Author']))
+        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Title']))
+        item.extend(list(temp_df.drop_duplicates('Book-Title')['Publisher']))
+        item.extend(list(temp_df.drop_duplicates('Book-Title')['Image-URL-M']))
+        data1.append(item)
+    return render_template('collab2.html', data=data1)
+
+
+
+
+@app.route('/content')
+def collab_ui3():
+    return render_template('content.html')
+
+
+@app.route('/content_1', methods=["POST"])
+def content():
+    user_input = request.form.get('user_input3')
+    title_id_arr = books_with_image[books_with_image['Book-Title'] == user_input].index.values
+    title_id = 0
+    for i in title_id_arr:
+        title_id += int(i)
+    # generate sim matrix
+    sim_matrix = cosine_similarity(title_matrix, title_matrix)
+    # features = vectorizer.get_feature_names()
+    top_n = 20
+    top_n_idx = np.flip(np.argsort(sim_matrix[title_id]), axis=0)[0:top_n]
+    top_n_sim_values = sim_matrix[title_id, top_n_idx]
+
+    # find top n with values > 0
+    top_n_idx = top_n_idx[top_n_sim_values > 0]
+    scores = top_n_sim_values[top_n_sim_values > 0]
+
+    # find features from the vectorized matrix
+    sim_books_idx = books_with_image['Book-Title'].iloc[top_n_idx].index
+    words = []
+    for book_idx in sim_books_idx:
+        try:
+            feature_array = np.squeeze(title_matrix[book_idx].toarray())
+        except:
+            feature_array = np.squeeze(title_matrix[book_idx])
+        idx = np.where(feature_array > 0)
+        words.append([" , ".join([features[i] for i in idx[0]])])
+
+        # collate results
+    res = pd.DataFrame({
+        "sim_books": book4['Book-Title'].iloc[top_n_idx].values, "words": words,
+        "scores": scores},
+        columns=["sim_books", "scores", "words"])  # for print book name which we want to show similar with,
+    # in this df use this as first col-"book_title" : books_title['title'].iloc[title_id], and add one more column
+    similar_items = res.drop_duplicates(subset=['sim_books']).reset_index()
+    temp_df = similar_items.merge(books_with_image, left_on='sim_books', right_on='Book-Title')
+    temp_df = temp_df.drop_duplicates('Book-Title').drop(['Book-Title'], axis=1)
+    data3 = []
+    for i in temp_df.values.tolist():
+        data3.append(i)
+    return render_template('content.html', data=data3)
+
+
+
+@app.route('/about')
+def collab_ui4():
+    return render_template('about.html')
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

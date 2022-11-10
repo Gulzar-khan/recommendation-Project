@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Recommedation System</title>
+<!--    minimized css from bootstrap cdn- https://getbootstrap.com/docs/5.2/getting-started/download/-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+</head>
+<body,"background-color:pink">
+
+<nav class="navbar", style="background-color:#00a15e91">
+<h2> <p class="navbar -brand">My Book Recommender</p></h2>
+</nav>
+
+
+
+<style>
+div.a {
+  white-space: nowrap;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+</style>
+</head>
+<body>
+
+<ul>
+  <li><a href="/">Home</a></li>
+  <li><a href="/collab">Collaborative User-Item Based </a></li>
+  <li><a href="/collab2">Collaborative Item-Item Based</a></li>
+      <li><a href="/content">Content Based</a></li>
+
+  <li style="float:right"><a class="active" href="/about">About</a></li>
+</ul>
+    <div>
+        <div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>Collaborative (Item-Item based)</h1>
+                        <h5>It takes Book Name and return similar User's interacted books.
+                        for example try - </h5><h6>Harry Potter and the Sorcerer's Stone (Book 1) , The Kitchen God's Wife ,
+                            Babylon Revisited : And Other Stories , 2nd Chance , Year of Wonders , Zoya  etc.</h6>
+                        <form action="/collab_2" method="post">
+                            <input name="user_input2" type="text" class="form-control"><br>
+                            <input type="submit" class="btn btn-lg btn-warning" >
+                        </form>
+                    </div>
+
+        {% if data %}
+                {% for j in data %}
+
+                    <div class="col-md-2" style="margin-top:30px">
+                        <div class="card">
+                            <div class="card-body">
+                                <img class="card-img-top" src="{{ j[3] }}">
+                                <h5> {{ j[1] }} </h5>
+                                <p>Auth.-{{ j[0] }}</p>
+                                <div class="a">Pub{{ j[2] }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+</body>
+</html>
