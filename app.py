@@ -42,7 +42,7 @@ def collab():
     #
     df_rating = df_user[df_user['pred_rating'].notna()].sort_values('book_rating', ascending=False).head(15)
     df_rating = df_rating.drop(['user_id', 'Total_No_Of_Users_Rated', 'book_rating', 'Avg_Rating'], axis=1)
-    data = []heroku login
+    data = []
     for i in range(len(df_rating) + 1):
         data.extend(df_rating.iloc[i:i + 1].values.tolist())
     print(data)
