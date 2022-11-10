@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Recommedation System</title>
+<!--    minimized css from bootstrap cdn- https://getbootstrap.com/docs/5.2/getting-started/download/-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+</head>
+<body,"background-color:pink">
+
+<nav class="navbar", style="background-color:#00a123">
+<h2> <p class="navbar -brand">My Book Recommender</p></h2>
+</nav>
+
+
+
+<style>
+div.a {
+  white-space: nowrap;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+</style>
+</head>
+<body>
+
+<ul>
+  <li><a href="/">Home</a></li>
+  <li><a href="/collab">Collaborative</a></li>
+  <li><a href="#contact">Contact</a></li>
+  <li style="float:right"><a class="active" href="#about">About</a></li>
+</ul>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Top Selling Books</h1>
+        </div>
+
+        {% for i in range(book_name|length) %}
+            <div class="col-md-2" style="margin-top:30px">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="{{ image[i] }}">
+                        <h5> {{ book_name[i] }} </h5>
+                        <p>Author name - {{ author_name[i] }}</p>
+                        <p>Year - {{ year[i] }}</p>
+                        <p>Publisher name - {{ Publisher_name[i] }}</p>
+                        <p>Times Book Bought - {{ Times_Book_Bought[i] }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+</div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Top 20 Books</h1>
+        </div>
+
+        {% for i in range(title|length) %}
+            <div class="col-md-2" style="margin-top:30px">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="{{ image2[i] }}">
+                        <h5> {{ title[i] }} </h5>
+                        <div class="a">Av Rt. - {{ Avg_Rating[i] }}</div>
+                        <div class="a">Score - {{ Score[i] }}</div>
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+</div>
+
+
+</div>
+
+</body>
+</html>
