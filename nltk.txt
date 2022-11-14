@@ -1,3 +1,2 @@
-nltk.download('stopwords')
 nltk.corpus
 nltk.stem.snowball

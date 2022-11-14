@@ -9,9 +9,9 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
 import nltk
-nltk.download('stopwords')
+# nltk.download('stopwords')
 import string
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
 
@@ -32,6 +32,8 @@ book4 = pickle.load(open('book4.pkl', 'rb'))
 
 # search base
 book_with_tags_image = pickle.load(open('book_with_tags_image.pkl', 'rb'))
+sw = pickle.load(open('sw_list.pkl', 'rb'))
+
 
 
 
@@ -170,7 +172,7 @@ def collab_ui5():
 def search():
     user_input=request.form.get('user_input4')
     text=user_input
-    sw = stopwords.words('english')
+    # sw = stopwords.words('english')
     # displaying the stopwords
     # np.array(sw)
     # Making necessory function for applying on tags column for better results
