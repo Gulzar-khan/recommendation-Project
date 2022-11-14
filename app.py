@@ -8,9 +8,15 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
+import nltk
+nltk.download('stopwords')
+import string
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
 
 
-top_selling_df = pickle.load(open('top_selling.pkl', 'rb'))
+
+top_selling_df=pickle.load(open('top_selling.pkl','rb'))
 top_books = pickle.load(open('top_books.pkl', 'rb'))
 # for collaborative
 collab_user1 = pickle.load(open('collab_user1.pkl', 'rb'))
@@ -23,6 +29,10 @@ books_with_image = pickle.load(open('books_with_image.pkl', 'rb'))
 title_matrix = pickle.load(open('title_matrix.pkl', 'rb'))
 features = pickle.load(open('features.pkl', 'rb'))
 book4 = pickle.load(open('book4.pkl', 'rb'))
+
+# search base
+book_with_tags_image = pickle.load(open('book_with_tags_image.pkl', 'rb'))
+
 
 
 
@@ -147,9 +157,60 @@ def content():
 
 
 
+
+@app.route('/search')
+def collab_ui5():
+    return render_template('search.html')
+@app.route('/search_1',methods=["post"])
+
+# def stemming(text):
+#     # '''a function which stems each word in the given text'''
+#     text = [stemmer.stem(word) for word in text.split()]
+#     return " ".join(text)
+def search():
+    user_input=request.form.get('user_input4')
+    text=user_input
+    sw = stopwords.words('english')
+    # displaying the stopwords
+    # np.array(sw)
+    # Making necessory function for applying on tags column for better results
+    '''a function for removing punctuation'''
+    # replacing the punctuations with no space,
+    # which in effect deletes the punctuation marks
+    translator = str.maketrans('', '', string.punctuation)
+    # return the text stripped of punctuation marks
+    text = text.translate(translator)
+    '''a function for removing the stopword'''
+    # removing the stop words and lowercasing the selected words
+    text = [word.lower() for word in text.split() if word.lower() not in sw]
+    # joining the list of words with space separator
+    text = " ".join(text)
+    # create an object of stemming function
+    stemmer = SnowballStemmer(language='english')
+    '''a function which stems each word in the given text'''
+    text = [stemmer.stem(word) for word in text.split()]
+    res = " ".join(text)
+
+    mask = book_with_tags_image['tags'].str.contains(res, case=False, na=False)
+    recom_df=book_with_tags_image[mask]
+    data4 = []
+    for i in recom_df.values.tolist():
+        data4.append(i)
+    return render_template('search.html', data=data4)
+# render_template('search.html', data=user_input)
+
+
+
+
+
+
+
+
 @app.route('/about')
 def collab_ui4():
     return render_template('about.html')
+
+
 
 
 
