@@ -161,7 +161,7 @@ def content():
 @app.route('/search')
 def collab_ui5():
     return render_template('search.html')
-@app.route('/search_1',methods=["post"])
+@app.route('/search_1',methods=["POST"])
 
 # def stemming(text):
 #     # '''a function which stems each word in the given text'''
